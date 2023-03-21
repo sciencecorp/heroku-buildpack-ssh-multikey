@@ -54,6 +54,6 @@ while read -r line; do
     elif [[ -n $key ]]; then
         key="$key"$'\n'"$line"
     fi
-done <<< "$ENV_DIR/BUILDPACK_SSH_KEYS"
+done <<< "$BUILDPACK_SSH_KEYS"
 
 echo "-----> Installed SSH keys from BUILDPACK_SSH_KEYS"
