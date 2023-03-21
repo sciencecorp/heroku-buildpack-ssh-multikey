@@ -1,25 +1,23 @@
-heroku-buildpack-ssh-key
-====
+# heroku-buildpack-ssh-multikey
 
-Add an ssh key to your build.
+Add ssh keys to your build.
 
-Adapted from [SectorLabs/heroku-buildpack-git-submodule](https://github.com/SectorLabs/heroku-buildpack-git-submodule).
+Adapted from [heroku/heroku-buildpack-ssh-key](https://github.com/heroku/heroku-buildpack-ssh-key).
 
 ## Usage
 
 1. Add the buildpack to your Heroku app:
 
-    ```
-    $ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-ssh-key.git -i 1
-    ```
+   ```
+   $ heroku buildpacks:add https://github.com/sciencecorp/heroku-buildpack-ssh-multikey -i 1
+   ```
 
-    Keep in mind that the buildpack order is important. If you'll specify this buildpack after your default one (e.g. `heroku/nodejs`) it'll not work. See [https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app) for details.
+   Keep in mind that the buildpack order is important. If you'll specify this buildpack after your default one (e.g. `heroku/nodejs`) it'll not work. See [https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app) for details.
 
-2. Set `BUILDPACK_SSH_KEY` to the private SSH key you want added:
+2. Set `BUILDPACK_SSH_KEYS` to the private SSH keys you want added, concatenated together:
 
-    ```
-    $ heroku config:set BUILDPACK_SSH_KEY="$(cat ~/.ssh/id_rsa)"
-    ```
+   ```
+   $ heroku config:set BUILDPACK_SSH_KEYS="$(cat keys.txt)"
+   ```
 
-The buildpack will save the SSH key to your build at `~/.ssh/id_rsa`.
-
+The buildpack will save the SSH keys to your build at `~/.ssh/keyN`.

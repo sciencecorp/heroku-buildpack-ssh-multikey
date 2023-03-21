@@ -13,10 +13,10 @@ VENDOR_DIR="$BUILD_DIR/vendor"
 ENV_DIR=$3
 
 # adapted from SectorLabs/heroku-buildpack-git-submodule
-BUILDPACK_SSH_KEY=$(<"$ENV_DIR/BUILDPACK_SSH_KEY")
+BUILDPACK_SSH_KEYS=$(<"$ENV_DIR/BUILDPACK_SSH_KEYS")
 
-if [[ -z $BUILDPACK_SSH_KEY ]]; then
-    echo "Did you forget to set BUILDPACK_SSH_KEY?" | indent
+if [[ -z $BUILDPACK_SSH_KEYS ]]; then
+    echo "Did you forget to set BUILDPACK_SSH_KEYS?" | indent
     exit 1
 fi
 
@@ -28,10 +28,29 @@ echo "Host *" >> ~/.ssh/config
 echo "   StrictHostKeyChecking no" >> ~/.ssh/config
 echo "   UserKnownHostsFile /dev/null" >> ~/.ssh/config
 echo "   LogLevel ERROR" >> ~/.ssh/config
-echo "-----> Installed SSH key from BUILDPACK_SSH_KEY"
+echo "-----> Installed SSH key from BUILDPACK_SSH_KEYS"
 
 # install the ssh key
 ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2> /dev/null
-cat "$ENV_DIR/BUILDPACK_SSH_KEY" > ~/.ssh/id_rsa
-echo >> ~/.ssh/id_rsa
-chmod 600 ~/.ssh/id_rsa
+
+KEYS_START="-----BEGIN OPENSSH PRIVATE KEY-----"
+KEYS_END="-----END OPENSSH PRIVATE KEY-----"
+
+# Create the ~/.ssh directory if it doesn't exist
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+
+# Split the keys and write them to separate files
+index=1
+while read -r line; do
+    if [[ $line == $KEYS_START* ]]; then
+        key="$line"
+    elif [[ $line == $KEYS_END ]]; then
+        key="$key"$'\n'"$line"
+        echo "$key" > ~/.ssh/key$index
+        chmod 600 ~/.ssh/key$index
+        index=$((index+1))
+    elif [[ -n $key ]]; then
+        key="$key"$'\n'"$line"
+    fi
+done <<< "$ENV_DIR/BUILDPACK_SSH_KEYS"
