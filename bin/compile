@@ -28,7 +28,6 @@ echo "Host *" >> ~/.ssh/config
 echo "   StrictHostKeyChecking no" >> ~/.ssh/config
 echo "   UserKnownHostsFile /dev/null" >> ~/.ssh/config
 echo "   LogLevel ERROR" >> ~/.ssh/config
-echo "-----> Installed SSH key from BUILDPACK_SSH_KEYS"
 
 # install the ssh key
 ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2> /dev/null
@@ -49,8 +48,12 @@ while read -r line; do
         key="$key"$'\n'"$line"
         echo "$key" > ~/.ssh/key$index
         chmod 600 ~/.ssh/key$index
+        echo "IdentityFile ~/.ssh/key$index" >> ~/.ssh/config
+        echo "Installed key$index with fingerprint $(ssh-keygen -l -f ~/.ssh/key$index | cut -d' ' -f2)"
         index=$((index+1))
     elif [[ -n $key ]]; then
         key="$key"$'\n'"$line"
     fi
 done <<< "$ENV_DIR/BUILDPACK_SSH_KEYS"
+
+echo "-----> Installed SSH keys from BUILDPACK_SSH_KEYS"
