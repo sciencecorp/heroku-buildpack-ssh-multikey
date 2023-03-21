@@ -6,7 +6,7 @@ indent() {
   sed -u 's/^/       /'
 }
 
-echo "-----> Install heroku-buildpack-ssh-key"
+echo "-----> Install heroku-buildpack-ssh-multikey"
 
 BUILD_DIR=$1
 VENDOR_DIR="$BUILD_DIR/vendor"
