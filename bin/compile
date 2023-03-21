@@ -49,7 +49,7 @@ while read -r line; do
         echo "$key" > ~/.ssh/key$index
         chmod 600 ~/.ssh/key$index
         echo "IdentityFile ~/.ssh/key$index" >> ~/.ssh/config
-        echo "Installed key$index with fingerprint $(ssh-keygen -l -f ~/.ssh/key$index | cut -d' ' -f2)"
+        echo "-----> Installed key$index with fingerprint $(ssh-keygen -l -f ~/.ssh/key$index | cut -d' ' -f2)"
         index=$((index+1))
     elif [[ -n $key ]]; then
         key="$key"$'\n'"$line"
