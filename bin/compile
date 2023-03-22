@@ -48,17 +48,12 @@ while read -r line; do
         key="$key"$'\n'"$line"
         echo "$key" > ~/.ssh/key$index
         chmod 600 ~/.ssh/key$index
-        echo "Host user$index-github" >> ~/.ssh/config
-        echo "  HostName github.com" >> ~/.ssh/config
-        echo "  User git" >> ~/.ssh/config
-        echo "  IdentityFile ~/.ssh/key$index" >> ~/.ssh/config
+        echo "IdentityFile ~/.ssh/key$index" >> ~/.ssh/config
         echo "-----> Installed key$index with fingerprint $(ssh-keygen -l -f ~/.ssh/key$index | cut -d' ' -f2)"
         index=$((index+1))
     elif [[ -n $key ]]; then
         key="$key"$'\n'"$line"
     fi
 done <<< "$BUILDPACK_SSH_KEYS"
-
-echo $(cat -v ~/.ssh/config)
 
 echo "-----> Installed SSH keys from BUILDPACK_SSH_KEYS"
